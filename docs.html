@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SRISPL Weighbridge - Documentation Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .card h3 {
+            color: #1f2937;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .card p {
+            color: #6b7280;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #3b82f6;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background: #2563eb;
+        }
+
+        .btn-success {
+            background: #10b981;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-warning {
+            background: #f59e0b;
+        }
+
+        .btn-warning:hover {
+            background: #d97706;
+        }
+
+        .features {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            margin-top: 30px;
+        }
+
+        .features h2 {
+            color: #1f2937;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature {
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 10px;
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .feature h4 {
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .feature p {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .quick-links {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .quick-links a {
+            margin: 0 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚛 SRISPL Weighbridge</h1>
+            <p>Complete Weighbridge Management System - Documentation Hub</p>
+            <p style="font-size: 1rem; margin-top: 10px;">SHREE RAM IRON AND STEEL PVT. LTD.</p>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <div class="card-icon">📖</div>
+                <h3>User Manual</h3>
+                <p>Complete guide for operators and administrators. Step-by-step workflow, features, and best practices.</p>
+                <a href="USER-MANUAL.md" class="btn" target="_blank">Open Manual</a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🚀</div>
+                <h3>Deployment Guide</h3>
+                <p>Installation instructions, configuration, building executables, and network deployment.</p>
+                <a href="DEPLOYMENT.md" class="btn btn-success" target="_blank">View Guide</a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">✨</div>
+                <h3>Improvements</h3>
+                <p>Complete list of fixes and enhancements. Image printing, COM port selector, UI modernization.</p>
+                <a href="IMPROVEMENTS.md" class="btn btn-warning" target="_blank">See Changes</a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">📚</div>
+                <h3>README</h3>
+                <p>Quick start guide, features overview, troubleshooting, and system information.</p>
+                <a href="README-SRISPL.md" class="btn" target="_blank">Read More</a>
+            </div>
+        </div>
+
+        <div class="quick-links">
+            <h3 style="color: white; margin-bottom: 20px;">Quick Access</h3>
+            <a href="/" class="btn btn-success">🖥️ Main Application</a>
+            <a href="/admin" class="btn btn-warning">👮 Admin Panel</a>
+        </div>
+
+        <div class="features">
+            <h2>✨ Key Features</h2>
+            <div class="features-grid">
+                <div class="feature">
+                    <div class="feature-icon">⚖️</div>
+                    <h4>Real-time Weighing</h4>
+                    <p>Live weight updates from serial port with automatic data capture</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🔌</div>
+                    <h4>Dynamic COM Port</h4>
+                    <p>Select and switch COM ports from UI without editing code</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🖨️</div>
+                    <h4>Perfect Printing</h4>
+                    <p>Professional slips with images, all data, and proper formatting</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">📸</div>
+                    <h4>Image Capture</h4>
+                    <p>Dual camera capture for entry and exit with vehicle photos</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">👮</div>
+                    <h4>Admin Control</h4>
+                    <p>Secure authorization workflow for entry and exit permissions</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">📊</div>
+                    <h4>Reports & Export</h4>
+                    <p>Daily reports, Excel export, and historical data search</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🎮</div>
+                    <h4>Simulation Mode</h4>
+                    <p>Works without hardware - perfect for training and testing</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">💻</div>
+                    <h4>Desktop App</h4>
+                    <p>Electron-based standalone application - no browser needed</p>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px; color: white;">
+            <p style="font-size: 1.1rem; margin-bottom: 10px;">Version 1.0.0 - December 2025</p>
+            <p>Built with ❤️ for SRISPL</p>
+        </div>
+    </div>
+</body>
+</html>

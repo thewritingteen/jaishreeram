@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weighbridge Operations - SHREE RAM IRON AND STEEL</title>
+    <style>
+        :root {
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --primary-light: #dbeafe;
+            --success: #10b981;
+            --success-light: #d1fae5;
+            --warning: #f59e0b;
+            --warning-light: #fef3c7;
+            --danger: #ef4444;
+            --danger-light: #fee2e2;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 340px 380px 1fr;
+            grid-template-rows: 80px 1fr;
+            height: 100vh;
+            gap: 0;
+        }
+
+        /* ========== TOP HEADER ========== */
+        .top-header {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-bottom: 3px solid #5a67d8;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            box-shadow: var(--shadow-lg);
+            z-index: 10;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+        }
+
+        .header-brand h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .live-display {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 12px 24px;
+            text-align: right;
+            min-width: 220px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .live-val {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: var(--primary);
+            line-height: 1;
+            font-family: 'Courier New', monospace;
+        }
+
+        .live-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .conn-status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .conn-status.online { background: #10b981; box-shadow: 0 0 8px #10b981; }
+        .conn-status.offline { background: #ef4444; }
+
+        .settings-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .settings-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+
+        /* ========== PANELS ========== */
+        .panel {
+            padding: 24px;
+            overflow-y: auto;
+            background: var(--bg-card);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel h3 {
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .zone-gate {
+            background: linear-gradient(to bottom, #fafafa, #ffffff);
+        }
+
+        /* ========== FORM INPUTS ========== */
+        .inp-field {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+
+        .inp-field:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        /* ========== BUTTONS ========== */
+        .btn-main {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 8px;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-main:active {
+            transform: scale(0.98);
+        }
+
+        .btn-sm {
+            padding: 10px 16px;
+            font-size: 0.875rem;
+            margin-top: 0;
+        }
+
+        .btn-blue {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-blue:hover {
+            background: var(--primary-dark);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-green {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-green:hover {
+            background: #059669;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-red {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-red:hover {
+            background: #dc2626;
+        }
+
+        .btn-dark {
+            background: var(--text-main);
+            color: white;
+        }
+
+        .btn-dark:hover {
+            background: #111827;
+        }
+
+        /* ========== VEHICLE CARDS ========== */
+        .vehicle-card {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .vehicle-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .vehicle-card.active {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .vehicle-card strong {
+            font-size: 1.05rem;
+            color: var(--text-main);
+        }
+
+        .vehicle-info {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-top: 8px;
+            text-transform: uppercase;
+        }
+
+        .st-AT_GATE { background: var(--danger-light); color: #991b1b; }
+        .st-AUTHORIZED { background: var(--primary-light); color: #1e40af; }
+        .st-ON_SCALE { background: var(--warning-light); color: #92400e; }
+        .st-FIRST_Wt_DONE { background: #fef3c7; color: #78350f; }
+        .st-EXIT_AUTHORIZED {
+            background: var(--success-light);
+            color: #065f46;
+            animation: pulse 2s infinite;
+        }
+        .st-COMPLETED { background: #f3f4f6; color: #374151; }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+        }
+
+        /* ========== WORKSPACE ========== */
+        .zone-work {
+            background: var(--bg-body);
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .work-card {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: var(--shadow-lg);
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .work-card h2 {
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .camera-box {
+            background: #000;
+            height: 400px;
+            width: 100%;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+        }
+
+        .controls-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .date-picker {
+            flex: 1;
+            padding: 10px 14px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .panel-header {
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .tab-buttons button {
+            flex: 1;
+        }
+
+        /* ========== MODALS ========== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-box {
+            background: white;
+            padding: 36px;
+            border-radius: 16px;
+            width: 460px;
+            max-width: 90%;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .modal-title {
+            margin-top: 0;
+            margin-bottom: 12px;
+            color: var(--text-main);
+            font-size: 1.5rem;
+        }
+
+        .modal-subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 24px;
+        }
+
+        .modal-label {
+            display: block;
+            text-align: left;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        /* ========== SETTINGS MODAL ========== */
+        .settings-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .port-item {
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .port-item:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .port-item.active {
+            border-color: var(--success);
+            background: var(--success-light);
+        }
+
+        .port-name {
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .port-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* ========== PRINT STYLES ========== */
+        #printable-slip, #printable-report {
+            display: none;
+        }
+
+        @media print {
+            body {
+                height: auto;
+                overflow: visible;
+                background: white;
+            }
+
+            .main-layout, .modal-overlay, .top-header {
+                display: none !important;
+            }
+
+            #printable-slip {
+                display: block !important;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                color: black;
+                background: white;
+                padding: 20px;
+                font-family: Arial, Helvetica, sans-serif;
+                z-index: 9999;
+            }
+
+            #printable-report {
+                display: block !important;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                background: white;
+                padding: 20px;
+            }
+
+            .receipt-container {
+                width: 100%;
+                max-width: 800px;
+                margin: 0 auto;
+            }
+
+            .rc-header {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+            .rc-company {
+                font-size: 24px;
+                font-weight: 900;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin: 0;
+                line-height: 1.2;
+                color: #000 !important;
+            }
+
+            .rc-address {
+                font-size: 14px;
+                margin: 5px 0 10px 0;
+                color: #000 !important;
+                font-weight: bold;
+            }
+
+            .rc-title {
+                font-size: 18px;
+                font-weight: bold;
+                text-decoration: underline;
+                margin-top: 5px;
+                color: #000 !important;
+            }
+
+            .rc-grid {
+                display: flex;
+                width: 100%;
+                font-size: 13px;
+                line-height: 1.8;
+                margin-bottom: 10px;
+            }
+
+            .rc-col-left {
+                width: 55%;
+                padding-right: 10px;
+            }
+
+            .rc-col-right {
+                width: 45%;
+                padding-left: 10px;
+            }
+
+            .rc-row {
+                display: flex;
+                margin-bottom: 3px;
+            }
+
+            .rc-label {
+                width: 120px;
+                font-weight: normal;
+                color: #000 !important;
+            }
+
+            .rc-val {
+                font-weight: bold;
+                flex: 1;
+                color: #000 !important;
+            }
+
+            .rc-net-strip {
+                border-top: 2px solid #000;
+                border-bottom: 2px solid #000;
+                padding: 10px 0;
+                margin: 15px 0;
+                display: flex;
+                align-items: center;
+            }
+
+            .rc-net-label {
+                font-size: 14px;
+                width: 100px;
+                padding-left: 5px;
+                color: #000 !important;
+            }
+
+            .rc-net-val {
+                font-size: 22px;
+                font-weight: 900;
+                color: #000 !important;
+            }
+
+            .rc-words {
+                font-size: 12px;
+                font-style: italic;
+                margin-bottom: 20px;
+                padding-left: 5px;
+                color: #000 !important;
+            }
+
+            .rc-footer {
+                margin-top: 20px;
+                font-size: 12px;
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-end;
+            }
+
+            .rc-sig-box {
+                text-align: center;
+                width: 150px;
+            }
+
+            .rc-sig-line {
+                border-top: 1px solid #000;
+                margin-top: 40px;
+                padding-top: 5px;
+            }
+
+            .barcode {
+                height: 40px;
+                width: 150px;
+                background: repeating-linear-gradient(90deg, #000, #000 2px, #fff 2px, #fff 4px);
+                margin-left: auto;
+            }
+
+            .rc-images {
+                display: flex;
+                gap: 15px;
+                margin-top: 30px;
+                justify-content: space-between;
+                page-break-inside: avoid;
+            }
+
+            .rc-img-wrapper {
+                width: 48%;
+                height: 240px;
+                border: 2px solid #000;
+                overflow: hidden;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .rc-img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .p-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 15px;
+            }
+
+            .p-table th,
+            .p-table td {
+                border: 1px solid #000;
+                padding: 8px;
+                font-size: 12px;
+                text-align: center;
+                color: #000 !important;
+            }
+
+            .p-table th {
+                background: #eee !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- TRANSPORT DETAIL INPUT MODAL -->
+    <div id="transport-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h3 class="modal-title">🚛 Transport Details</h3>
+            <p class="modal-subtitle">Please enter details before printing</p>
+
+            <label class="modal-label">Transporter Name</label>
+            <input type="text" id="modal-trans-name" class="inp-field" placeholder="Enter Transporter Name">
+
+            <label class="modal-label">LR / Bilty No</label>
+            <input type="text" id="modal-lr-no" class="inp-field" placeholder="Enter LR / Bilty Number">
+
+            <div class="modal-actions">
+                <button class="btn-main btn-red" onclick="closeModal()">Cancel</button>
+                <button class="btn-main btn-blue" onclick="confirmPrint()">🖨️ Print Now</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SETTINGS MODAL (COM PORT SELECTOR) -->
+    <div id="settings-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h3 class="modal-title">⚙️ Settings</h3>
+            <p class="modal-subtitle">Select COM Port for Weight Scale</p>
+
+            <div class="settings-list" id="ports-list">
+                <p style="color: var(--text-muted);">Loading available ports...</p>
+            </div>
+
+            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);">
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">
+                    Current: <strong id="current-port-display">Checking...</strong>
+                </p>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">
+                    Mode: <strong id="mode-display">Loading...</strong>
+                </p>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-main btn-dark" onclick="closeSettings()">Close</button>
+                <button class="btn-main btn-blue" onclick="refreshPorts()">🔄 Refresh</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PRINTABLE SLIP -->
+    <div id="printable-slip">
+        <div class="receipt-container">
+            <div class="rc-header">
+                <h1 class="rc-company">SHREE RAM IRON AND STEEL PVT. LTD.</h1>
+                <p class="rc-address">Urla Industrial Complex, Raipur</p>
+                <div class="rc-title">Weightment Slip - Original</div>
+            </div>
+
+            <div class="rc-grid">
+                <div class="rc-col-left">
+                    <div class="rc-row"><span class="rc-label">Party Name</span> <span class="rc-val">: <span id="p-party"></span></span></div>
+                    <div class="rc-row"><span class="rc-label">Place</span> <span class="rc-val">: URLA</span></div>
+                    <div class="rc-row"><span class="rc-label">Item</span> <span class="rc-val">: <span id="p-item"></span></span></div>
+                    <div class="rc-row"><span class="rc-label">Transporter</span> <span class="rc-val">: <span id="p-trans">-</span></span></div>
+                    <div style="margin-top: 10px;"></div>
+                    <div class="rc-row"><span class="rc-label">Gross WT</span> <span class="rc-val">: <span id="p-gross"></span> MT</span></div>
+                    <div class="rc-row"><span class="rc-label">Tare WT</span> <span class="rc-val">: <span id="p-tare"></span> MT</span></div>
+                </div>
+                <div class="rc-col-right">
+                    <div class="rc-row"><span class="rc-label">Mode</span> <span class="rc-val">: SALE</span></div>
+                    <div class="rc-row"><span class="rc-label">Vehicle No.</span> <span class="rc-val">: <span id="p-veh"></span></span></div>
+                    <div class="rc-row"><span class="rc-label">S.No.</span> <span class="rc-val">: <span id="p-sno"></span></span></div>
+                    <div class="rc-row"><span class="rc-label">Ac/Of</span> <span class="rc-val">: </span></div>
+                    <div style="margin-top: 10px;"></div>
+                    <div class="rc-row"><span class="rc-label">IN Time</span> <span class="rc-val">: <span id="p-intime"></span></span></div>
+                    <div class="rc-row"><span class="rc-label">IN Date</span> <span class="rc-val">: <span id="p-indate"></span></span></div>
+                    <div class="rc-row"><span class="rc-label">OUT Time</span> <span class="rc-val">: <span id="p-outtime"></span></span></div>
+                    <div class="rc-row"><span class="rc-label">OUT Date</span> <span class="rc-val">: <span id="p-outdate"></span></span></div>
+                </div>
+            </div>
+
+            <div class="rc-net-strip">
+                <span style="font-size:13px; width:100px; color:#000;">LR/Bilty: <span id="p-lr-bilty-display">-</span></span>
+                <span class="rc-net-label">Net WT :</span>
+                <span class="rc-net-val"><span id="p-net"></span> MT</span>
+            </div>
+
+            <div class="rc-words" id="p-words"></div>
+
+            <div class="rc-footer">
+                <div style="flex:1">
+                    <div><strong>Trans : </strong> <span id="p-trans-footer">-</span></div>
+                    <div style="margin-top:5px;">Prepared By : 000000-HP/0000000</div>
+                </div>
+                <div class="barcode"></div>
+                <div class="rc-sig-box">
+                    <div class="rc-sig-line">Signed By</div>
+                </div>
+            </div>
+
+            <div class="rc-images">
+                <div class="rc-img-wrapper"><img id="p-img1" class="rc-img" alt="Entry"></div>
+                <div class="rc-img-wrapper"><img id="p-img2" class="rc-img" alt="Exit"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PRINTABLE REPORT -->
+    <div id="printable-report" class="print-area">
+        <div class="rc-header">
+            <h1 class="rc-company">DAILY WEIGHBRIDGE REPORT</h1>
+            <p>Date: <span id="rpt-date">--</span></p>
+        </div>
+        <table class="p-table">
+            <thead>
+                <tr>
+                    <th>S.No</th>
+                    <th>Vehicle No</th>
+                    <th>Party</th>
+                    <th>Item</th>
+                    <th>Net Wt (kg)</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody id="rpt-body"></tbody>
+            <tfoot>
+                <tr style="background:#eee; font-weight:bold;">
+                    <td colspan="4">TOTAL</td>
+                    <td id="rpt-total-net">0</td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <!-- MAIN APPLICATION -->
+    <div class="main-layout">
+        <header class="top-header">
+            <div class="header-brand">
+                <span style="font-size: 2rem;">🚛</span>
+                <h2>SRISPL WeighBridge</h2>
+            </div>
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <button class="settings-btn" onclick="openSettings()">⚙️ Settings</button>
+                <div class="live-display">
+                    <div class="live-val" id="live-weight">0</div>
+                    <div class="live-label">
+                        <span>KG</span>
+                        <span class="conn-status offline" id="conn-status"></span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <aside class="panel zone-gate">
+            <h3>📍 Gate Entry</h3>
+            <form id="gate-form" onsubmit="return false;">
+                <input class="inp-field" id="v-no" placeholder="Vehicle No (e.g. CG07AX3772)" required>
+                <input class="inp-field" id="p-name" placeholder="Party Name" required>
+                <input class="inp-field" id="item-name" placeholder="Item / Material">
+                <select class="inp-field" id="t-type">
+                    <option value="LOADING">Loading</option>
+                    <option value="UNLOADING">Unloading</option>
+                </select>
+                <button type="button" class="btn-main btn-blue" onclick="registerGate()">
+                    ➕ Register Vehicle
+                </button>
+            </form>
+        </aside>
+
+        <section class="panel">
+            <div class="panel-header">
+                <div class="tab-buttons">
+                    <button class="btn-main btn-dark btn-sm" onclick="switchTab('PENDING')">📋 Active</button>
+                    <button class="btn-main btn-dark btn-sm" onclick="switchTab('COMPLETED')">📊 History</button>
+                </div>
+                <div id="history-controls" style="display:none; margin-bottom:12px;">
+                    <div class="controls-row">
+                        <input type="date" id="history-date" class="date-picker" onchange="fetchHistory()">
+                        <button class="btn-main btn-blue btn-sm" onclick="fetchHistory()">Go</button>
+                    </div>
+                </div>
+                <input class="inp-field" id="search-bar" placeholder="🔍 Search..." onkeyup="renderList()">
+            </div>
+            <div id="list-container" style="flex:1; overflow-y:auto;"></div>
+            <div id="footer-actions" style="display:none; margin-top:12px; padding-top:12px; border-top:2px solid var(--border);">
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                    <button class="btn-main btn-dark btn-sm" onclick="printDailyReport()">🖨️ Report</button>
+                    <button class="btn-main btn-green btn-sm" onclick="exportToExcel()">📊 Excel</button>
+                    <button class="btn-main btn-red btn-sm" onclick="deleteAll()">🗑️ Delete All</button>
+                </div>
+            </div>
+        </section>
+
+        <main class="zone-work" id="workspace">
+            <div style="text-align:center; color:var(--text-muted); margin-top:100px; font-size:1.2rem;">
+                👈 Select a vehicle from the list to get started
+            </div>
+        </main>
+    </div>
+
+    <script>
+      // Automatically detect if we are on Localhost or Ngrok
+let BASE_URL = window.location.origin;
+const WS_PROTOCOL = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+const WS_URL = `${WS_PROTOCOL}//${window.location.host}`;
+        let ws, pending = [], completed = [], currentTab = 'PENDING', selectedId = null, liveWt = 0, videoStream = null;
+
+        // Fetch server info on load
+        async function initServerInfo() {
+            try {
+                const res = await fetch(`${BASE_URL}/api/server-info`);
+                const data = await res.json();
+                BASE_URL = data.baseUrl;
+                console.log('✅ Server Base URL:', BASE_URL);
+            } catch (e) {
+                console.log('⚠️ Using default BASE_URL');
+            }
+        }
+
+        function connect() {
+            ws = new WebSocket(WS_URL);
+            
+            ws.onopen = () => {
+                document.getElementById('conn-status').classList.add('online');
+                document.getElementById('conn-status').classList.remove('offline');
+            };
+
+            ws.onclose = () => {
+                document.getElementById('conn-status').classList.remove('online');
+                document.getElementById('conn-status').classList.add('offline');
+                setTimeout(connect, 3000);
+            };
+
+            ws.onmessage = (e) => {
+                const msg = JSON.parse(e.data);
+                
+                if (msg.type === 'LIVE_WEIGHT_UPDATE') {
+                    liveWt = msg.payload;
+                    document.getElementById('live-weight').innerText = Math.round(liveWt);
+                }
+                
+                if (msg.type === 'PENDING_LIST_UPDATE') {
+                    pending = msg.payload;
+                    if (currentTab === 'PENDING') renderList();
+                    if (selectedId && currentTab === 'PENDING') renderWorkspace();
+                }
+                
+                if (msg.type === 'COMPLETED_LIST_UPDATE') {
+                    completed = msg.payload.records;
+                    if (currentTab === 'COMPLETED') renderList();
+                }
+                
+                if (msg.type === 'USER_ALERT_PERMIT') {
+                    alert(`✅ Admin Authorized Ticket #${msg.payload.id}`);
+                }
+
+                if (msg.type === 'PORT_CHANGE_RESULT') {
+                    if (msg.payload.success) {
+                        alert(`✅ Successfully switched to ${msg.payload.port}`);
+                    } else {
+                        alert(`⚠️ Port change failed: ${msg.payload.error}\n${msg.payload.simulation ? 'Running in simulation mode.' : ''}`);
+                    }
+                    refreshPorts();
+                }
+            };
+        }
+
+        function switchTab(t) {
+            currentTab = t;
+            selectedId = null;
+            document.getElementById('history-controls').style.display = (t === 'COMPLETED') ? 'block' : 'none';
+            document.getElementById('footer-actions').style.display = (t === 'COMPLETED') ? 'block' : 'none';
+            document.getElementById('workspace').innerHTML = '<div style="text-align:center; color:var(--text-muted); margin-top:100px; font-size:1.2rem;">👈 Select a vehicle from the list</div>';
+            
+            if (t === 'COMPLETED') {
+                if (!document.getElementById('history-date').value) {
+                    document.getElementById('history-date').valueAsDate = new Date();
+                }
+                fetchHistory();
+            } else {
+                renderList();
+            }
+        }
+
+        function fetchHistory() {
+            const date = document.getElementById('history-date').value;
+            if (date && ws.readyState === 1) {
+                ws.send(JSON.stringify({ type: 'GET_COMPLETED_FOR_DATE', payload: { date } }));
+            }
+        }
+
+        function renderList() {
+            const list = currentTab === 'PENDING' ? pending : completed;
+            const q = document.getElementById('search-bar').value.toLowerCase();
+            const filtered = list.filter(i =>
+                i.vehicleNumber.toLowerCase().includes(q) ||
+                i.id.toString().includes(q) ||
+                i.partyName.toLowerCase().includes(q)
+            );
+
+            document.getElementById('list-container').innerHTML = filtered.map(i => `
+                <div class="vehicle-card ${selectedId === i.id ? 'active' : ''}" onclick="selectItem(${i.id})">
+                    <strong>#${i.id} - ${i.vehicleNumber}</strong>
+                    <div class="vehicle-info">${i.partyName}</div>
+                    <span class="status-badge st-${i.status || 'COMPLETED'}">${(i.status || 'COMPLETED').replace('_', ' ')}</span>
+                </div>
+            `).join('');
+        }
+
+        function selectItem(id) {
+            selectedId = id;
+            renderList();
+            renderWorkspace();
+        }
+
+        function registerGate() {
+            const vNo = document.getElementById('v-no').value.trim();
+            const pName = document.getElementById('p-name').value.trim();
+            
+            if (!vNo || !pName) {
+                alert('Please enter Vehicle Number and Party Name');
+                return;
+            }
+
+            ws.send(JSON.stringify({
+                type: 'REGISTER_GATE_ENTRY',
+                payload: {
+                    vehicleNumber: vNo,
+                    partyName: pName,
+                    item: document.getElementById('item-name').value,
+                    transactionType: document.getElementById('t-type').value
+                }
+            }));
+            
+            document.getElementById('gate-form').reset();
+            switchTab('PENDING');
+        }
+
+        function renderWorkspace() {
+            const data = currentTab === 'PENDING' ? pending : completed;
+            const rec = data.find(i => i.id === selectedId);
+            
+            if (!rec) return;
+
+            let actions = '';
+            let statusInfo = '';
+
+            if (currentTab === 'COMPLETED') {
+                actions = `<button class="btn-main btn-dark" onclick="initiatePrintSlip(${rec.id})">🖨️ Reprint Slip</button>`;
+            } else {
+                if (rec.status === 'AT_GATE') {
+                    statusInfo = `<div style="padding:20px; background:var(--warning-light); border-radius:8px; text-align:center; font-weight:600;">⏳ Waiting for Gate Entry Authorization from Admin</div>`;
+                } else if (rec.status === 'AUTHORIZED') {
+                    actions = `<button class="btn-main btn-blue" onclick="sendUpdate('CONFIRM_VEHICLE_ON_WB', {id:${rec.id}})">✅ Confirm Vehicle on Scale</button>`;
+                } else if (rec.status === 'ON_SCALE') {
+                    statusInfo = `<div class="camera-box"><video id="cam-stream" autoplay muted playsinline></video></div>`;
+                    actions = `<button class="btn-main btn-green" onclick="capture(1)">📸 Capture 1st Weight</button>`;
+                    setTimeout(startCam, 100);
+                } else if (rec.status === 'FIRST_Wt_DONE') {
+                    statusInfo = `<div style="padding:20px; background:var(--danger-light); border-radius:8px; text-align:center; font-weight:700; color:#991b1b;">⛔ EXIT LOCKED. Waiting for Admin Authorization.</div>`;
+                } else if (rec.status === 'EXIT_AUTHORIZED') {
+                    statusInfo = `<div class="camera-box"><video id="cam-stream" autoplay muted playsinline></video></div><div style="padding:12px; background:var(--success-light); border-radius:8px; text-align:center; font-weight:600; color:#065f46; margin-bottom:12px;">✅ Exit Authorized! Proceed with 2nd weighing.</div>`;
+                    actions = `<button class="btn-main btn-green" onclick="capture(2)">📸 Capture 2nd Weight & Complete</button>`;
+                    setTimeout(startCam, 100);
+                }
+            }
+
+            document.getElementById('workspace').innerHTML = `
+                <div class="work-card">
+                    <h2>🎫 Ticket #${rec.id}</h2>
+                    <div style="margin-bottom:20px; padding:16px; background:var(--bg-body); border-radius:8px;">
+                        <div style="margin-bottom:8px;"><strong>Vehicle:</strong> ${rec.vehicleNumber}</div>
+                        <div style="margin-bottom:8px;"><strong>Party:</strong> ${rec.partyName}</div>
+                        <div><strong>Item:</strong> ${rec.item || '-'}</div>
+                    </div>
+                    ${statusInfo}
+                    ${actions}
+                </div>
+            `;
+        }
+
+        function sendUpdate(type, payload) {
+            ws.send(JSON.stringify({ type, payload }));
+        }
+
+        function capture(step) {
+            const vid = document.getElementById('cam-stream');
+            if (!vid || vid.readyState < 2) {
+                finalizeCapture(step, "");
+                return;
+            }
+
+            try {
+                const cvs = document.createElement('canvas');
+                cvs.width = vid.videoWidth;
+                cvs.height = vid.videoHeight;
+                cvs.getContext('2d').drawImage(vid, 0, 0);
+                finalizeCapture(step, cvs.toDataURL('image/jpeg', 0.8));
+            } catch (e) {
+                alert("Capture failed: " + e.message);
+            }
+        }
+
+        function finalizeCapture(step, imgData) {
+            const rec = pending.find(r => r.id === selectedId);
+            const p = { id: selectedId, imageData: imgData, grossWt: 0, tareWt: 0 };
+
+            if (step === 1) {
+                if (rec.transactionType === 'LOADING') {
+                    p.tareWt = liveWt;
+                } else {
+                    p.grossWt = liveWt;
+                }
+                sendUpdate('Tv_CAPTURE_FIRST', p);
+            } else {
+                if (rec.grossWt > 0) {
+                    p.grossWt = rec.grossWt;
+                    p.tareWt = liveWt;
+                } else {
+                    p.tareWt = rec.tareWt;
+                    p.grossWt = liveWt;
+                }
+                sendUpdate('Tv_CAPTURE_SECOND', p);
+                setTimeout(() => initiatePrintSlip(selectedId), 800);
+            }
+        }
+
+        async function startCam() {
+            try {
+                if (videoStream) {
+                    videoStream.getTracks().forEach(t => t.stop());
+                }
+                videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                const v = document.getElementById('cam-stream');
+                if (v) v.srcObject = videoStream;
+            } catch (e) {
+                console.error('Camera error:', e);
+            }
+        }
+
+        function exportToExcel() {
+            if (completed.length === 0) {
+                alert("No data to export.");
+                return;
+            }
+
+            let csv = "Ticket No,Vehicle No,Party Name,Item,Type,Gross Wt,Tare Wt,Net Wt,Date,Time In,Time Out\n";
+            completed.forEach(r => {
+                const tIn = r.createdTimestamp ? new Date(r.createdTimestamp).toLocaleTimeString() : '-';
+                const tOut = r.completedTimestamp ? new Date(r.completedTimestamp).toLocaleTimeString() : '-';
+                csv += `${r.id},${r.vehicleNumber},${r.partyName},${r.item},${r.transactionType},${r.grossWt},${r.tareWt},${r.netWt},${r.date},${tIn},${tOut}\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Report_${document.getElementById('history-date').value}.csv`;
+            a.click();
+        }
+
+        function deleteAll() {
+            const date = document.getElementById('history-date').value;
+            if (confirm(`⚠️ DANGER: Are you sure you want to DELETE ALL records for ${date}?`)) {
+                ws.send(JSON.stringify({ type: 'DELETE_ALL_COMPLETED', payload: { date } }));
+            }
+        }
+
+        function printDailyReport() {
+            document.getElementById('printable-slip').style.display = 'none';
+            document.getElementById('printable-report').style.display = 'block';
+            document.getElementById('rpt-date').innerText = document.getElementById('history-date').value || new Date().toLocaleDateString();
+
+            const tbody = document.getElementById('rpt-body');
+            tbody.innerHTML = '';
+            let totalNet = 0;
+
+            completed.forEach((row, index) => {
+                totalNet += (row.netWt || 0);
+                const time = row.completedTimestamp ? new Date(row.completedTimestamp).toLocaleTimeString() : '-';
+                tbody.innerHTML += `<tr><td>${index + 1}</td><td>${row.vehicleNumber}</td><td>${row.partyName}</td><td>${row.item || '-'}</td><td>${row.netWt}</td><td>${time}</td></tr>`;
+            });
+
+            document.getElementById('rpt-total-net').innerText = totalNet + " kg";
+            window.print();
+        }
+
+        function numToWords(n) {
+            const a = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+            const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+            const num = parseInt(n);
+            if (num === 0) return '';
+            if (num < 20) return a[num];
+            if (num < 100) return b[Math.floor(num / 10)] + (num % 10 !== 0 ? ' ' + a[num % 10] : '');
+            if (num < 1000) return a[Math.floor(num / 100)] + ' Hundred' + (num % 100 !== 0 ? ' ' + numToWords(num % 100) : '');
+            return num;
+        }
+
+        function getFullWords(mtVal) {
+            if (!mtVal) return "";
+            const mt = Math.floor(mtVal);
+            const kg = Math.round((mtVal - mt) * 1000);
+            let str = numToWords(mt) + " MT";
+            if (kg > 0) str += " and " + numToWords(kg) + " Kg";
+            return str;
+        }
+
+       // ================= PRINT LOGIC (FIXED) =================
+
+function initiatePrintSlip(id) {
+    let rec = completed.find(r => r.id === id) || pending.find(r => r.id === id);
+    if (!rec) return;
+
+    // 1. DO NOT show the slip yet (Keep user on Dashboard)
+    // We only populate the data in the background
+    
+    document.getElementById('p-sno').innerText = rec.id;
+    document.getElementById('p-veh').innerText = rec.vehicleNumber;
+    document.getElementById('p-party').innerText = rec.partyName;
+    document.getElementById('p-item').innerText = rec.item || '-';
+
+    const tsIn = rec.createdTimestamp ? new Date(rec.createdTimestamp) : new Date();
+    const tsOut = rec.completedTimestamp ? new Date(rec.completedTimestamp) : new Date();
+
+    document.getElementById('p-indate').innerText = tsIn.toLocaleDateString('en-GB');
+    document.getElementById('p-intime').innerText = tsIn.toLocaleTimeString();
+    document.getElementById('p-outdate').innerText = tsOut.toLocaleDateString('en-GB');
+    document.getElementById('p-outtime').innerText = tsOut.toLocaleTimeString();
+
+    const g = (rec.grossWt || 0).toFixed(3);
+    const t = (rec.tareWt || 0).toFixed(3);
+    const n = (rec.netWt || (Math.abs(g - t))).toFixed(3);
+
+    document.getElementById('p-gross').innerText = g;
+    document.getElementById('p-tare').innerText = t;
+    document.getElementById('p-net').innerText = n;
+    document.getElementById('p-words').innerText = getFullWords(n);
+
+    // Load Images
+    const ts = new Date().getTime();
+    if (rec.image1) document.getElementById('p-img1').src = `${BASE_URL}/uploads/${rec.image1}?v=${ts}`;
+    if (rec.image2) document.getElementById('p-img2').src = `${BASE_URL}/uploads/${rec.image2}?v=${ts}`;
+
+    // Pre-fill Modal
+    document.getElementById('modal-trans-name').value = rec.transporterName || '';
+    document.getElementById('modal-lr-no').value = rec.lrBiltyNo || '';
+
+    // 2. Show ONLY the Modal (Dashboard stays visible in background)
+    selectedId = id; // Remember which ID we are printing
+    document.getElementById('transport-modal').style.display = 'flex';
+
+requestAnimationFrame(() => {
+    document.getElementById('modal-trans-name')?.focus();
+});
+
+}
+
+function confirmPrint() {
+    const transName = document.getElementById('modal-trans-name').value.trim();
+    const lrNo = document.getElementById('modal-lr-no').value.trim();
+
+    // 1. Update Slip Details
+    document.getElementById('p-trans').innerText = transName || 'Self';
+    document.getElementById('p-trans-footer').innerText = transName || 'Self';
+    document.getElementById('p-lr-bilty-display').innerText = lrNo || '-';
+
+    // 2. Send Data to Server
+    if (selectedId && ws && ws.readyState === 1) {
+        ws.send(JSON.stringify({
+            type: 'UPDATE_PRINT_DETAILS',
+            payload: {
+                id: selectedId,
+                transporterName: transName || 'Self',
+                lrBiltyNo: lrNo || '-'
+            }
+        }));
+    }
+
+    // 3. Hide Modal
+    document.getElementById('transport-modal').style.display = 'none';
+
+    // 4. SWAP INTERFACE: Show Slip, Hide Dashboard
+    document.querySelector('.main-layout').style.visibility = 'hidden'; // Hide Dashboard
+    document.getElementById('printable-slip').style.display = 'block'; // Show Slip
+
+    // 5. Print and then Restore Dashboard
+    // 5. Print ONCE, then restore dashboard
+setTimeout(() => {
+    window.print();
+    setTimeout(restoreDashboard, 1000);
+}, 500);
+
+}
+
+function closeModal() {
+    document.getElementById('transport-modal').style.display = 'none';
+}
+function restoreDashboard() {
+    document.getElementById('printable-slip').style.display = 'none';
+    document.getElementById('printable-report').style.display = 'none';
+    document.querySelector('.main-layout').style.visibility = 'visible';
+    document.getElementById('modal-trans-name').value = '';
+    document.getElementById('modal-lr-no').value = '';
+
+}
+
+
+        // ================= SETTINGS & PORT SELECTION =================
+        async function openSettings() {
+            document.getElementById('settings-modal').style.display = 'flex';
+            refreshPorts();
+        }
+
+        function closeSettings() {
+            document.getElementById('settings-modal').style.display = 'none';
+        }
+
+        async function refreshPorts() {
+            try {
+                const res = await fetch(`${BASE_URL}/api/ports`);
+                const data = await res.json();
+
+                if (data.success) {
+                    const portsList = document.getElementById('ports-list');
+                    
+                    if (data.ports.length === 0) {
+                        portsList.innerHTML = '<p style="color: var(--text-muted);">No COM ports found</p>';
+                    } else {
+                        portsList.innerHTML = data.ports.map(p => `
+                            <div class="port-item ${p.path === data.currentPort ? 'active' : ''}" onclick="changePort('${p.path}')">
+                                <div class="port-name">${p.path}</div>
+                                <div class="port-desc">${p.description || 'No description'}</div>
+                            </div>
+                        `).join('');
+                    }
+
+                    document.getElementById('current-port-display').innerText = data.currentPort;
+                    document.getElementById('mode-display').innerText = data.isSimulation ? '🎮 Simulation' : '✅ Hardware Connected';
+                } else {
+                    document.getElementById('ports-list').innerHTML = '<p style="color: var(--danger);">Error loading ports</p>';
+                }
+            } catch (e) {
+                document.getElementById('ports-list').innerHTML = '<p style="color: var(--danger);">Failed to connect to server</p>';
+            }
+        }
+
+        async function changePort(portPath) {
+            try {
+                const res = await fetch(`${BASE_URL}/api/change-port`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ port: portPath })
+                });
+                
+                const data = await res.json();
+                // The result will be broadcast via WebSocket
+            } catch (e) {
+                alert('Failed to change port: ' + e.message);
+            }
+        }
+
+        // Initialize
+        initServerInfo().then(() => {
+            connect();
+        });
+    </script>
+</body>
+</html>
